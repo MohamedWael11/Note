@@ -4,36 +4,34 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useState } from "react";
 
-
 function Signup() {
-  let navigate = useNavigate()
-  const [isloading,setIsLoading] = useState(false)
-  const [successMsg,setSuccessMsg] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
+  let navigate = useNavigate();
+  const [isloading, setIsLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
   const handleRegister = async (values) => {
-    console.log(values);
-    setIsLoading(true)
-    setSuccessMsg('')
-    setErrorMsg('')
+    setIsLoading(true);
+    setSuccessMsg("");
+    setErrorMsg("");
     try {
-      let {data} = await axios.post(
+      let { data } = await axios.post(
         `https://note-sigma-black.vercel.app/api/v1/users/signUp`,
         values
       );
-      setIsLoading(false)
-      console.log(data);
-      if(data?.msg=='done'){
-        setSuccessMsg('Account created successfully')
-        setTimeout(()=>{
-          navigate('/login')
-        },1500)
+      setIsLoading(false);
+      if (data?.msg == "done") {
+        setSuccessMsg("Account created successfully");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
       }
     } catch (err) {
-      setIsLoading(false)
-      setErrorMsg(err.response.data.msg)
-      console.log(err);
+      setIsLoading(false);
+      setErrorMsg(err.response?.data?.msg || "Something went wrong");
     }
   };
+
   const validation = Yup.object().shape({
     name: Yup.string()
       .min(3, "name must be 3 characters")
@@ -56,112 +54,129 @@ function Signup() {
   });
 
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      password: "",
-      age: "",
-      phone: "",
-    },
+    initialValues: { name: "", email: "", password: "", age: "", phone: "" },
     onSubmit: handleRegister,
     validationSchema: validation,
   });
+
   return (
-    <>
-      <form onSubmit={formik.handleSubmit} className="bg-white p-8 rounded-2xl shadow-xl  text-center  mx-auto w-[90%] md:w-[40%] my-11 m-10">
-     
-          <h2 className="text-2xl font-semibold mb-4">Register..</h2>
-          <p className="text-green-700  font-semibold my-10">{successMsg}</p>
-          <p className="text-red-600  font-semibold my-10">{errorMsg}</p>
-          <input
-            type="text"
-            placeholder="Name"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.name}
-            name="name"
-            className="w-full p-2 rounded mb-4 border border-gray-300"
-          />
-         {formik.errors.name&&formik.touched.name? <div
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert"
-          >
-            <span class="font-medium">{formik.errors.name}</span>
-          </div>:''}
-          <input
-            placeholder="Email"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.email}
-            name="email"
-            className="w-full p-2  rounded mb-4 border border-gray-300"
-          />
-           {formik.errors.email&&formik.touched.email? <div
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert"
-          >
-            <span class="font-medium">{formik.errors.email}</span>
-          </div>:''}
-          <input
-            type="password"
-            placeholder="Password"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-            name="password"
-            className="w-full p-2  rounded mb-4 border border-gray-300"
-          />
-           {formik.errors.password&&formik.touched.password? <div
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert"
-          >
-            <span class="font-medium">{formik.errors.password}</span>
-          </div>:''}
-          <input
-            type="number"
-            placeholder="Age"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.age}
-            name="age"
-            className="w-full p-2  rounded mb-4 border border-gray-300"
-          />
-           {formik.errors.age&&formik.touched.age? <div
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert"
-          >
-            <span class="font-medium">{formik.errors.age}</span>
-          </div>:''}
-          <input
-            type="tel"
-            placeholder="Phone"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.phone}
-            name="phone"
-            className="w-full p-2  rounded mb-4 border border-gray-300"
-          />
-           {formik.errors.phone&&formik.touched.phone? <div
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert"
-          >
-            <span class="font-medium">{formik.errors.phone}</span>
-          </div>:''}
-          <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
-            {isloading?<i className="fas fa-spinner fa-spin"></i>:'Register'}
-          </button>
-          <p className="mt-4 flex justify-between">
-            already have account?
-            <Link
-              to="/login"
-              className="text-blue-500 font-semibold hover:text-blue-600"
-            >
-              Login now ...
-            </Link>
+    <div className="min-h-[85vh] flex items-center justify-center bg-gray-50 px-4 py-10">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md"
+      >
+        <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
+          Create Account
+        </h2>
+        <p className="text-center text-gray-400 text-sm mb-6">
+          Sign up to get started
+        </p>
+
+        {successMsg && (
+          <p className="text-green-700 bg-green-50 border border-green-200 rounded-lg text-sm font-medium py-2 px-3 mb-4 text-center">
+            {successMsg}
           </p>
- 
+        )}
+        {errorMsg && (
+          <p className="text-red-700 bg-red-50 border border-red-200 rounded-lg text-sm font-medium py-2 px-3 mb-4 text-center">
+            {errorMsg}
+          </p>
+        )}
+
+        <div className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.name}
+              name="name"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formik.errors.name && formik.touched.name && (
+              <p className="text-red-600 text-sm mt-1">{formik.errors.name}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              placeholder="Email"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              name="email"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formik.errors.email && formik.touched.email && (
+              <p className="text-red-600 text-sm mt-1">{formik.errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+              name="password"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formik.errors.password && formik.touched.password && (
+              <p className="text-red-600 text-sm mt-1">{formik.errors.password}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <input
+                type="number"
+                placeholder="Age"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.age}
+                name="age"
+                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {formik.errors.age && formik.touched.age && (
+                <p className="text-red-600 text-xs mt-1">{formik.errors.age}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="tel"
+                placeholder="Phone"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.phone}
+                name="phone"
+                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {formik.errors.phone && formik.touched.phone && (
+                <p className="text-red-600 text-xs mt-1">{formik.errors.phone}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isloading}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+        >
+          {isloading ? <i className="fas fa-spinner fa-spin"></i> : "Register"}
+        </button>
+
+        <p className="mt-5 text-sm text-gray-600 flex justify-between items-center">
+          Already have an account?
+          <Link to="/login" className="text-blue-600 font-semibold hover:text-blue-700">
+            Login now
+          </Link>
+        </p>
       </form>
-    </>
+    </div>
   );
 }
 export default Signup;
